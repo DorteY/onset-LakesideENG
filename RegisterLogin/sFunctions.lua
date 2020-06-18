@@ -17,7 +17,16 @@ AddRemoteEvent("player:register",function(player,username,password,gender)
 				
 				local query=mariadb_query(handler,mariadb_prepare(handler,"SELECT * FROM userdata WHERE SteamID='?';",steamid),function()
 					if(mariadb_get_row_count()==0)then
-						mariadb_query(handler,"INSERT INTO `userdata` (`SteamID`,`Username`,`Password`,`Gender`,`Health`,`Armor`,`AdminLVL`,`Playtime`,`Money`,`Bankmoney`,`Jobmoney`,`Faction`,`Factionrank`,`hunger`,`thirst`,`spawnX`,`spawnY`,`spawnZ`,`spawnROT`,`Clothing`,`Tutorial`) VALUES ('"..steamid.."','"..username.."','"..password.."','"..gender.."','100','0','0','0','1200','3000','0','Civilian','0','100','100','115070','164073','3029','90','1','1');")
+						if(gender=="Male")then
+							clothingbody=0;
+							clothinghair=0;
+							clothingoutfit=0;
+						else
+							clothingbody=1;
+							clothinghair=1;
+							clothingoutfit=1;
+						end
+						mariadb_query(handler,"INSERT INTO `userdata` (`SteamID`,`Username`,`Password`,`Gender`,`Health`,`Armor`,`AdminLVL`,`Playtime`,`Money`,`Bankmoney`,`Jobmoney`,`Faction`,`Factionrank`,`hunger`,`thirst`,`spawnX`,`spawnY`,`spawnZ`,`spawnROT`,`Tutorial`,`ClothingBody`,`ClothingHair`,`ClothingOutfit`) VALUES ('"..steamid.."','"..username.."','"..password.."','"..gender.."','100','0','0','0','1200','3000','0','Civilian','0','100','100','115070','164073','3029','90','1','"..clothingbody.."','"..clothinghair.."','"..clothingoutfit.."');")
 					end
 				end)
 				local query=mariadb_query(handler,mariadb_prepare(handler,"SELECT * FROM inventory WHERE SteamID='?';",steamid),function()
@@ -42,17 +51,18 @@ AddRemoteEvent("player:register",function(player,username,password,gender)
 				SetPlayerLocation(player,116450.6,164016.6,3029+250)
 				SetPlayerHeading(player,0)
 				
-				Delay(25*1000,function(player)
+				--[[Delay(25*1000,function(player)
 					SetPlayerSpawnLocation(player,116450.6,164016.6,3029,90.0)
 					SetPlayerLocation(player,116450.6,164016.6,3029+250)
 					SetPlayerHeading(player,0)
 					CallRemoteEvent(player,"MakeNotification","Successfully registered!","linear-gradient(to right, #00b09b, #96c93d)")
-				end,player)
+				end,player)]]
 				
 				
 				SetPlayerPropertyValue(player,"Loggedin",1,true)
 				SetPlayerHealth(player,100)
 				SetPlayerArmor(player,0)
+				SetPlayerPropertyValue(player,"Gender",gender,true)
 				SetPlayerPropertyValue(player,"AdminLVL",0,true)
 				SetPlayerPropertyValue(player,"Playtime",0,true)
 				SetPlayerPropertyValue(player,"Money",1200,true)
@@ -62,8 +72,10 @@ AddRemoteEvent("player:register",function(player,username,password,gender)
 				SetPlayerPropertyValue(player,"Factionrank",0,true)
 				SetPlayerPropertyValue(player,"hunger",100,true)
 				SetPlayerPropertyValue(player,"thirst",100,true)
-				SetPlayerPropertyValue(player,"Clothing",1,true)
 				SetPlayerPropertyValue(player,"Tutorial",1,true)
+				SetPlayerPropertyValue(player,"ClothingBody",clothingbody,true)
+				SetPlayerPropertyValue(player,"ClothingHair",clothinghair,true)
+				SetPlayerPropertyValue(player,"ClothingOutfit",ClothingOutfit,true)
 				
 				SetPlayerPropertyValue(player,"Burger",3,true)
 				SetPlayerPropertyValue(player,"Donut",0,true)
@@ -82,6 +94,7 @@ AddRemoteEvent("player:register",function(player,username,password,gender)
 				
 				startTimer(player)
 				TutorialQuests(player)
+				UpdateClothes(player)
 			end
 		else
 			CallRemoteEvent(player,"open:register_login","Register")
@@ -104,6 +117,7 @@ AddRemoteEvent("player:login",function(player,username,password)
 				SetPlayerArmor(player,tonumber(result['Armor']))
 				
 				SetPlayerPropertyValue(player,"Loggedin",1,true)
+				SetPlayerPropertyValue(player,"Gender",result['Gender'],true)
 				SetPlayerPropertyValue(player,"AdminLVL",tonumber(result['AdminLVL']),true)
 				SetPlayerPropertyValue(player,"Playtime",tonumber(result['Playtime']),true)
 				SetPlayerPropertyValue(player,"Money",tonumber(result['Money']),true)
@@ -113,19 +127,22 @@ AddRemoteEvent("player:login",function(player,username,password)
 				SetPlayerPropertyValue(player,"Factionrank",tonumber(result['Factionrank']),true)
 				SetPlayerPropertyValue(player,"hunger",tonumber(result['hunger']),true)
 				SetPlayerPropertyValue(player,"thirst",tonumber(result['thirst']),true)
-				SetPlayerPropertyValue(player,"Clothing",result['Clothing'],true)
 				SetPlayerPropertyValue(player,"Tutorial",tonumber(result['Tutorial']),true)
+				SetPlayerPropertyValue(player,"ClothingBody",tonumber(result['ClothingBody']),true)
+				SetPlayerPropertyValue(player,"ClothingHair",tonumber(result['ClothingHair']),true)
+				SetPlayerPropertyValue(player,"ClothingOutfit",tonumber(result['ClothingOutfit']),true)
 				
 				
-				Delay(25*1000,function(player)
+				--[[Delay(25*1000,function(player)
 					SetPlayerLocation(player,result['spawnX'],result['spawnY'],result['spawnZ']+250)
 					SetPlayerHeading(player,result['spawnROT'])
 					TutorialQuests(player)
 					CallRemoteEvent(player,"MakeNotification","Successfully logged in!","linear-gradient(to right, #00b09b, #96c93d)")
-				end,player)
+				end,player)]]
 				
 				--//Start Hunger/Thirst/Payday timer
 				startTimer(player)
+				UpdateClothes(player)
 			end
 			
 			
@@ -233,7 +250,7 @@ function SavePlayerAccount(player)
 	end
 	
 	--//Userdata
-	local userquery=mariadb_prepare(handler,"UPDATE userdata SET Health='?',Armor='?',AdminLVL='?',Playtime='?',Money='?',Bankmoney='?',Jobmoney='?',Faction='?',Factionrank='?',hunger='?',thirst='?',Clothing='?',Tutorial='?' WHERE SteamID='?';",
+	local userquery=mariadb_prepare(handler,"UPDATE userdata SET Health='?',Armor='?',AdminLVL='?',Playtime='?',Money='?',Bankmoney='?',Jobmoney='?',Faction='?',Factionrank='?',hunger='?',thirst='?',Tutorial='?',ClothingBody='?',ClothingHair='?',ClothingOutfit='?' WHERE SteamID='?';",
 		GetPlayerHealth(player),
 		GetPlayerArmor(player),
 		GetPlayerPropertyValue(player,"AdminLVL"),
@@ -245,8 +262,10 @@ function SavePlayerAccount(player)
 		GetPlayerPropertyValue(player,"Factionrank"),
 		GetPlayerPropertyValue(player,"hunger"),
 		GetPlayerPropertyValue(player,"thirst"),
-		GetPlayerPropertyValue(player,"Clothing"),
 		GetPlayerPropertyValue(player,"Tutorial"),
+		GetPlayerPropertyValue(player,"ClothingBody"),
+		GetPlayerPropertyValue(player,"ClothingHair"),
+		GetPlayerPropertyValue(player,"ClothingOutfit"),
 		tostring(GetPlayerSteamId(player))
 	)
 	mariadb_query(handler,userquery)

@@ -8,9 +8,9 @@ handler=false
 local DB={
 	HOST="127.0.0.1",
 	PORT=3306,
-	NAME="",
-	PASS="",
-	USER="",
+	NAME="LakesideOnset",
+	PASS="tC3w79w6BUXouFm7",
+	USER="LakesideOnset",
 	LOG="debug",
 	CHAR="utf8mb4",
 }

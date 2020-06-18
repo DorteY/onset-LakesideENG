@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Erstellungszeit: 03. Mrz 2020 um 13:10
--- Server-Version: 5.7.29
--- PHP-Version: 7.1.33-8+0~20200202.31+debian9~1.gbp266c28
+-- Erstellungszeit: 18. Jun 2020 um 20:11
+-- Server-Version: 5.7.30
+-- PHP-Version: 7.1.33-16+0~20200514.38+debian9~1.gbp1e5820
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `lakesideONSET`
+-- Datenbank: `LakesideOnset`
 --
 
 -- --------------------------------------------------------
@@ -144,8 +144,10 @@ CREATE TABLE `userdata` (
   `spawnY` varchar(50) NOT NULL DEFAULT '164073',
   `spawnZ` varchar(50) NOT NULL DEFAULT '3029',
   `spawnROT` varchar(50) NOT NULL DEFAULT '90',
-  `Clothing` int(11) NOT NULL DEFAULT '1',
-  `Tutorial` int(11) NOT NULL DEFAULT '1'
+  `Tutorial` int(11) NOT NULL DEFAULT '1',
+  `ClothingBody` int(11) NOT NULL DEFAULT '1',
+  `ClothingHair` int(11) NOT NULL DEFAULT '1',
+  `ClothingOutfit` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------

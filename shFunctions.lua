@@ -36,6 +36,8 @@ prices={
 			[11]=25000,
 			[12]=110500,
 			[25]=10000,
+			[27]=45000,
+			[29]=25000,
 		},
 		weapon={
 			Pistol01=500,
@@ -126,5 +128,62 @@ admin={
 		[2]="Moderator",
 		[1]="Supporter",
 		[0]="Player",
+	},
+}
+
+
+
+
+
+
+
+PlayerBodyModels={
+	["Male"]={
+		[0]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal01_LPR",
+		[1]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal02_LPR",
+		[2]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal03_LPR",
+		[3]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal04_LPR",
+		[4]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal05_LPR",
+		[5]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal06_LPR",
+		[6]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal07_LPR",
+		[7]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal08_LPR",
+		[8]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal09_LPR",
+		[9]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal10_LPR",
+		[10]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal11_LPR",
+		[11]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal12_LPR",
+		[12]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal13_LPR",
+		[13]="/Game/CharacterModels/SkeletalMesh/BodyMerged/HZN_CH3D_Normal14_LPR",
+	},
+	["Female"]={
+		[0]="/Game/CharacterModels/Female/Meshes/SK_Female01",
+		[1]="/Game/CharacterModels/Female/Meshes/SK_Female02",
+		[2]="/Game/CharacterModels/Female/Meshes/SK_Female03",
+	},
+}
+PlayerClothingModels={
+	["Male"]={
+		[0]="/Game/CharacterModels/Mafia/Meshes/SK_Mafia",
+	},
+	["Female"]={
+		[0]="/Game/CharacterModels/Female/Meshes/SK_Outfit01",
+		[1]="/Game/CharacterModels/Female/Meshes/SK_Outfit02",
+		[2]="/Game/CharacterModels/Female/Meshes/SK_Outfit03",
+		[3]="/Game/CharacterModels/Female/Meshes/SK_Outfit04",
+		[4]="/Game/CharacterModels/Female/Meshes/SK_Outfit05",
+		[5]="/Game/CharacterModels/Female/Meshes/SK_Outfit06",
+	},
+}
+PlayerHairModels={
+	["Male"]={
+		[0]="/Game/CharacterModels/SkeletalMesh/HZN_CH3D_Hair_Business_LP",
+		[1]="/Game/CharacterModels/SkeletalMesh/HZN_CH3D_Hair_Scientist_LP",
+		[2]="/Game/CharacterModels/SkeletalMesh/HZN_CH3D_Normal_Hair_01_LPR",
+		[3]="/Game/CharacterModels/SkeletalMesh/HZN_CH3D_Normal_Hair_03_LPR",
+		[4]="/Game/CharacterModels/SkeletalMesh/HZN_CH3D_Normal_Hair_02_LPR",
+	},
+	["Female"]={
+		[0]="/Game/CharacterModels/Female/Meshes/SK_Hair01",
+		[1]="/Game/CharacterModels/Female/Meshes/SK_Hair02",
+		[2]="/Game/CharacterModels/Female/Meshes/SK_Hair03",
 	},
 }

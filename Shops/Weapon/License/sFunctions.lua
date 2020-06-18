@@ -25,18 +25,22 @@ AddEvent("OnPlayerJoin",function(player)
 end)
 
 AddRemoteEvent("interact:gunlicense",function(player,object)
-    local dealer=GetGunlicensePedByObject(object)
-	if(dealer)then
-		local x,y,z=GetNPCLocation(dealer.NPC)
-		local x2,y2,z2=GetPlayerLocation(player)
-        local dist=GetDistance3D(x,y,z,x2,y2,z2)
-		if(dist<130)then
-			if(GetPlayerPropertyValue(player,"Gunlicense")==0)then
-				CallRemoteEvent(player,"open:gunlicenseUI")
-			else
-				CallRemoteEvent(player,"MakeNotification","You have already a Gunlicense!","linear-gradient(to right, #ff5f6d, #ffc371)")
+	if(GetPlayerPropertyValue(player,"Playtime")>=180)then
+		local dealer=GetGunlicensePedByObject(object)
+		if(dealer)then
+			local x,y,z=GetNPCLocation(dealer.NPC)
+			local x2,y2,z2=GetPlayerLocation(player)
+			local dist=GetDistance3D(x,y,z,x2,y2,z2)
+			if(dist<130)then
+				if(GetPlayerPropertyValue(player,"Gunlicense")==0)then
+					CallRemoteEvent(player,"open:gunlicenseUI")
+				else
+					CallRemoteEvent(player,"MakeNotification","You have already a Gunlicense!","linear-gradient(to right, #ff5f6d, #ffc371)")
+				end
 			end
 		end
+	else
+		CallRemoteEvent(player,"MakeNotification","You haven't enough play time! (3hours)","linear-gradient(to right, #ff5f6d, #ffc371)")
 	end
 end)
 function GetGunlicensePedByObject(object)

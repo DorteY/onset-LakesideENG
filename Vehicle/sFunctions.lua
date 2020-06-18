@@ -18,7 +18,8 @@ AddEvent("OnPlayerPickupHit",function(player,Marker)
 end)
 
 AddRemoteEvent("buy:vehicle",function(player,id)
-	local freeslot=Random(1,99999999)
+	local slot=Random(1,99999999)
+	local owner=GetPlayerName(player)
 	
 	if(id)then
 		if(GetPlayerPropertyValue(player,"Money")>=prices.shop.vehicles[id])then
@@ -27,8 +28,8 @@ AddRemoteEvent("buy:vehicle",function(player,id)
 			local query=mariadb_prepare(handler,"INSERT INTO vehicles (ID,VehID,SteamID,Owner,Slot,Fuel,Health,spawnX,spawnY,spawnZ,spawnROT) VALUES (NULL,'?','?','?','?','?','?','?','?','?','?');",
 				id,
 				tostring(GetPlayerSteamId(player)),
-				GetPlayerName(player),
-				freeslot,
+				owner,
+				slot,
 				100,
 				3500,
 				spawnX,
@@ -38,17 +39,25 @@ AddRemoteEvent("buy:vehicle",function(player,id)
 			)
 			mariadb_query(handler,query)
 			
-			Vehicles[GetPlayerName(player)..freeslot]=CreateVehicle(id,spawnX,spawnY,spawnZ,spawnROT)
-			SetVehicleLicensePlate(Vehicles[GetPlayerName(player)..freeslot],GetPlayerName(player))
-			SetVehicleRespawnParams(Vehicles[GetPlayerName(player)..freeslot],false)
-			SetVehiclePropertyValue(Vehicles[GetPlayerName(player)..freeslot],"veh:owner",GetPlayerName(player))
-			SetVehiclePropertyValue(Vehicles[GetPlayerName(player)..freeslot],"veh:slot",freeslot)
-			SetVehiclePropertyValue(Vehicles[GetPlayerName(player)..freeslot],"veh:fuel",100)
-			SetVehiclePropertyValue(Vehicles[GetPlayerName(player)..freeslot],"veh:lock",true,true)
-			SetVehiclePropertyValue(Vehicles[GetPlayerName(player)..freeslot],"veh:engine",false,true)
-			SetPlayerInVehicle(player,Vehicles[GetPlayerName(player)..freeslot])
-			StopVehicleEngine(Vehicles[GetPlayerName(player)..freeslot])
-			SetVehicleHealth(Vehicles[GetPlayerName(player)..freeslot],3500)
+			Vehicles[owner..slot]=CreateVehicle(id,spawnX,spawnY,spawnZ,spawnROT)
+			SetVehicleLicensePlate(Vehicles[owner..slot],GetPlayerName(player))
+			SetVehicleRespawnParams(Vehicles[owner..slot],false)
+			SetVehiclePropertyValue(Vehicles[owner..slot],"veh:owner",GetPlayerName(player))
+			SetVehiclePropertyValue(Vehicles[owner..slot],"veh:slot",slot)
+			SetVehiclePropertyValue(Vehicles[owner..slot],"veh:fuel",100)
+			SetVehiclePropertyValue(Vehicles[owner..slot],"veh:lock",true,true)
+			SetVehiclePropertyValue(Vehicles[owner..slot],"veh:engine",false,true)
+			SetPlayerInVehicle(player,Vehicles[owner..slot])
+			StopVehicleEngine(Vehicles[owner..slot])
+			SetVehicleHealth(Vehicles[owner..slot],3500)
+			
+			if(GetVehicleModel(Vehicles[owner..slot])==6)then
+				EnableVehicleBackfire(Vehicles[owner..slot],true)
+			elseif(GetVehicleModel(Vehicles[owner..slot])==12)then
+				EnableVehicleBackfire(Vehicles[owner..slot],true)
+			else
+				EnableVehicleBackfire(Vehicles[owner..slot],false)
+			end
 			
 			CallRemoteEvent(player,"MakeNotification","Vehicle successfully bought","linear-gradient(to right, #0593ff, #00f3ff)")
 		else
@@ -72,12 +81,20 @@ AddEvent("database:connected",function()
 				local z=result["spawnZ"]
 				local rot=result["spawnROT"]
 				
-				if(not Vehicles[owner..slot])then
+				if(not(Vehicles[owner..slot]))then
 					Vehicles[owner..slot]=CreateVehicle(vehid,x,y,z,rot)
 					SetVehicleLicensePlate(Vehicles[owner..slot],owner)
 					SetVehicleRespawnParams(Vehicles[owner..slot],false)
 					StopVehicleEngine(Vehicles[owner..slot])
 					SetVehicleHealth(Vehicles[owner..slot],health)
+					
+					if(GetVehicleModel(Vehicles[owner..slot])==6)then
+						EnableVehicleBackfire(Vehicles[owner..slot],true)
+					elseif(GetVehicleModel(Vehicles[owner..slot])==12)then
+						EnableVehicleBackfire(Vehicles[owner..slot],true)
+					else
+						EnableVehicleBackfire(Vehicles[owner..slot],false)
+					end
 					
 					SetVehiclePropertyValue(Vehicles[owner..slot],"veh:owner",owner)
 					SetVehiclePropertyValue(Vehicles[owner..slot],"veh:slot",slot)
@@ -163,10 +180,12 @@ end)
 AddEvent("OnPlayerLeaveVehicle",function(player,veh,seat)
 	if(veh)then
 		if(seat==1)then
-			if(GetVehiclePropertyValue(veh,"veh:engine")==true)then
-				StartVehicleEngine(veh)
-			elseif(GetVehiclePropertyValue(veh,"veh:engine")==false)then
-				StopVehicleEngine(veh)
+			if(GetVehiclePropertyValue(veh,"veh:engine"))then
+				if(GetVehiclePropertyValue(veh,"veh:engine")==true)then
+					StartVehicleEngine(veh)
+				elseif(GetVehiclePropertyValue(veh,"veh:engine")==false)then
+					StopVehicleEngine(veh)
+				end
 			end
 		end
 		if(GetVehicleHealth(veh)==0)then
@@ -176,8 +195,10 @@ AddEvent("OnPlayerLeaveVehicle",function(player,veh,seat)
 				VehicleFuelTimer[veh]=nil
 			end
 		end
-		if(GetVehiclePropertyValue(veh,"veh:fuel")>=100)then
-			SetVehiclePropertyValue(veh,"veh:fuel",100)
+		if(GetVehiclePropertyValue(veh,"veh:fuel"))then
+			if(GetVehiclePropertyValue(veh,"veh:fuel")>=100)then
+				SetVehiclePropertyValue(veh,"veh:fuel",100)
+			end
 		end
 	end
 end)

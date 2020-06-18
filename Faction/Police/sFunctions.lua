@@ -4,7 +4,7 @@
 
 
 local DutyMarker={
-	[1]=CreatePickup(340,170104,193769,1350)
+	[1]=CreatePickup(340,170427,193529,1400)
 }
 for i=1,#DutyMarker do
 	SetPickupPropertyValue(DutyMarker[i],"Duty:Police",true)
@@ -22,8 +22,6 @@ end)
 
 AddRemoteEvent("go:police_duty",function(player,typ)
 	if(typ==0)then
-		SetPlayerPropertyValue(player,"test:clothing",13)
-		
 		if(GetPlayerPropertyValue(player,"Factionrank")==0)then
 			SetPlayerWeapon(player,21,50,true,1,true)
 			SetPlayerWeapon(player,2,60,true,2,true)
@@ -43,8 +41,6 @@ AddRemoteEvent("go:police_duty",function(player,typ)
 		
 		CallRemoteEvent(player,"MakeNotification","You're now On duty!","linear-gradient(to right, #0593ff, #00f3ff)")
 	elseif(typ==1)then
-		SetPlayerPropertyValue(player,"test:clothing",GetPlayerPropertyValue(player,"Clothing"))
-		
 		SetPlayerWeapon(player,1,0,true,1,true)
 		SetPlayerWeapon(player,1,0,true,2,true)
 		SetPlayerWeapon(player,1,0,true,3,true)

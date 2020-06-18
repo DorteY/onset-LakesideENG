@@ -52,6 +52,8 @@ AddEvent("OnPackageStart",function()
 	
 	CreateText3D("Carshop",16,163330,191647,1290+100,0,0,0)
 	CreateText3D("Delivery Driver job",16,200368,171892,1260+100,0,0,0)
+	CreateText3D("Hair shop\nPress '"..interactKey.."'",18,208221,180323,1260+100,0,0,0)
+	CreateText3D("Outfit shop\nPress '"..interactKey.."'",18,207575,180323,1260+100,0,0,0)
 end)
 
 AddEvent("OnPlayerJoin",function(player)
@@ -212,10 +214,10 @@ local function setPlayerSpawn(player,typ)
 		elseif(typ==4)then
 			if(GetPlayerPropertyValue(player,"Faction")=="Police")then
 				local query=mariadb_prepare(handler,"UPDATE userdata SET spawnX='?',spawnY='?',spawnZ='?',spawnROT='?' WHERE SteamID='?';",
-					"170015",
-					"194178",
+					"170256",
+					"192816",
 					"1400",
-					"180",
+					"0",
 					tostring(GetPlayerSteamId(player))
 				)
 				mariadb_query(handler,query)

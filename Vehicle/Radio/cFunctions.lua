@@ -20,7 +20,10 @@ local Radios={
 local CurrentRadio=1
 local channel=nil
 
-AddEvent("OnKeyPress",function(key)  
+AddEvent("OnKeyPress",function(key)
+	if(not(IsPlayerInVehicle()))then
+		return
+	end
     if(key=="R" and IsPlayerInVehicle())then
 		channel=nil
         CallRemoteEvent("radio:getplayersinvehicle",RadioStatus)
@@ -36,14 +39,14 @@ AddEvent("OnKeyPress",function(key)
 		if(channel==nil)then
 			channel=1
 		end
-		if(key=="Mouse Wheel Up")then
+		if(key=="Mouse Wheel Up" and IsPlayerInVehicle())then
 			if(channel>=0)then
 				channel=channel+1
-				if(channel>#Radios)then--6
+				if(channel>#Radios)then
 					channel=#Radios
 				end
 			end
-		elseif(key=="Mouse Wheel Down")then
+		elseif(key=="Mouse Wheel Down" and IsPlayerInVehicle())then
 			channel=channel-1
 			if(channel<=1)then
 				channel=1

@@ -3,68 +3,75 @@
 --||         Lake-Gaming.com         ||--
 
 
-local SkinShopMarker={
-	[1]=CreatePickup(340,207923,175828,1260)
+local HairShopMarker={
+	[1]=CreatePickup(340,208221,180323,1260),
 }
-for i=1,#SkinShopMarker do
-	SetPickupPropertyValue(SkinShopMarker[i],"shop:skin",true)
+
+local OutfitShopMarker={
+	[1]=CreatePickup(340,207575,180323,1260),
+}
+
+for i=1,#HairShopMarker do
+	SetPickupPropertyValue(HairShopMarker[i],"Pickup->Typ->Hair",true)
+end
+for i=1,#OutfitShopMarker do
+	SetPickupPropertyValue(OutfitShopMarker[i],"Pickup->Typ->Outfit",true)
 end
 
 AddEvent("OnPlayerPickupHit",function(player,Marker)
-	if(not IsPlayerInVehicle(player))then
-		if(GetPickupPropertyValue(Marker,"shop:skin")==true)then
+	if(not(IsPlayerInVehicle(player)))then
+		if(GetPickupPropertyValue(Marker,"Pickup->Typ->Hair")==true)then
 			local cash=GetPlayerPropertyValue(player,"Money")
-			CallRemoteEvent(player,"open:skinshopUI",cash)
+			CallRemoteEvent(player,"Open->Hair->Shop->UI",cash)
+		elseif(GetPickupPropertyValue(Marker,"Pickup->Typ->Outfit")==true)then
+			local cash=GetPlayerPropertyValue(player,"Money")
+			CallRemoteEvent(player,"Open->Outfit->Shop->UI",cash)
 		end
 	end
 end)
 
 
-AddRemoteEvent("preview:skin",function(player,skin)
-	if(skin==0)then
-		SetPlayerPropertyValue(player,"test:clothing",1)
-	elseif(skin==1)then
-		SetPlayerPropertyValue(player,"test:clothing",2)
-	elseif(skin==2)then
-		SetPlayerPropertyValue(player,"test:clothing",3)
-	elseif(skin==3)then
-		SetPlayerPropertyValue(player,"test:clothing",4)
-	elseif(skin==4)then
-		SetPlayerPropertyValue(player,"test:clothing",5)
-	elseif(skin==6)then
-		SetPlayerPropertyValue(player,"test:clothing",7)
+--//New clothing funcs
+AddRemoteEvent("Buy->Char->Item",function(player,typ,typ2)
+	local gender=tostring(GetPlayerPropertyValue(player,"Gender"))
+	if(typ=="Hair")then
+		SetPlayerPropertyValue(player,"ClothingHair",tonumber(typ2))
+		CallRemoteEvent(player,"Sync->Client->Clothing",player,"Hair",PlayerHairModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingHair"))]);
+		CallRemoteEvent(player,"MakeNotification","Hair successfully bought!","linear-gradient(to right, #00b09b, #96c93d)")
+		
+		UpdateClothes(player)
+	end
+	if(typ=="Outfit")then
+		SetPlayerPropertyValue(player,"ClothingOutfit",tonumber(typ2))
+		CallRemoteEvent(player,"Sync->Client->Clothing",player,"Outfit",PlayerClothingModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingOutfit"))]);
+		CallRemoteEvent(player,"MakeNotification","Outfit successfully bought!","linear-gradient(to right, #00b09b, #96c93d)")
+		
+		UpdateClothes(player)
 	end
 end)
-AddRemoteEvent("buy:skin",function(player,skin)
-	if(skin==0)then
-		if(GetPlayerPropertyValue(player,"Money")>=prices.shop.skins.skin1)then
-			SetPlayerPropertyValue(player,"Clothing",1)
-			SetPlayerPropertyValue(player,"Money",GetPlayerPropertyValue(player,"Money")-prices.shop.skins.skin1,true)
-		end
-	elseif(skin==1)then
-		if(GetPlayerPropertyValue(player,"Money")>=prices.shop.skins.skin2)then
-			SetPlayerPropertyValue(player,"Clothing",2)
-			SetPlayerPropertyValue(player,"Money",GetPlayerPropertyValue(player,"Money")-prices.shop.skins.skin2,true)
-		end
-	elseif(skin==2)then
-		if(GetPlayerPropertyValue(player,"Money")>=prices.shop.skins.skin3)then
-			SetPlayerPropertyValue(player,"Clothing",3)
-			SetPlayerPropertyValue(player,"Money",GetPlayerPropertyValue(player,"Money")-prices.shop.skins.skin3,true)
-		end
-	elseif(skin==3)then
-		if(GetPlayerPropertyValue(player,"Money")>=prices.shop.skins.skin4)then
-			SetPlayerPropertyValue(player,"Clothing",4)
-			SetPlayerPropertyValue(player,"Money",GetPlayerPropertyValue(player,"Money")-prices.shop.skins.skin4,true)
-		end
-	elseif(skin==4)then
-		if(GetPlayerPropertyValue(player,"Money")>=prices.shop.skins.skin5)then
-			SetPlayerPropertyValue(player,"Clothing",5)
-			SetPlayerPropertyValue(player,"Money",GetPlayerPropertyValue(player,"Money")-prices.shop.skins.skin5,true)
-		end
-	elseif(skin==6)then
-		if(GetPlayerPropertyValue(player,"Money")>=prices.shop.skins.skin7)then
-			SetPlayerPropertyValue(player,"Clothing",7)
-			SetPlayerPropertyValue(player,"Money",GetPlayerPropertyValue(player,"Money")-prices.shop.skins.skin7,true)
-		end
+
+
+function UpdateClothes(player)
+	if(PlayerBodyModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingBody"))])then
+		CallRemoteEvent(player,"Sync->Client->Clothing",player,"Body",PlayerBodyModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingBody"))]);
+	else
+		AddPlayerChat(player,"ERROR: #09312")
 	end
-end)
+	
+	if(PlayerHairModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingHair"))])then
+		CallRemoteEvent(player,"Sync->Client->Clothing",player,"Hair",PlayerHairModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingHair"))]);
+	else
+		AddPlayerChat(player,"ERROR: #97522")
+	end
+	
+	if(PlayerClothingModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingOutfit"))])then
+		CallRemoteEvent(player,"Sync->Client->Clothing",player,"Outfit",PlayerClothingModels[tostring(GetPlayerPropertyValue(player,"Gender"))][tonumber(GetPlayerPropertyValue(player,"ClothingOutfit"))]);
+	else
+		AddPlayerChat(player,"ERROR: #58992")
+	end
+end
+AddRemoteEvent("Sync->Server->Clothing",UpdateClothes)
+
+function UpdateClothesAllPlayers(player,target)
+
+end

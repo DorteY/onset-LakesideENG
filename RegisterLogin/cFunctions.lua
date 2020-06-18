@@ -140,18 +140,3 @@ function disableRegisterLoginFuncs()
 	SetIgnoreMoveInput(false)
 	ShowMouseCursor(false)
 end
-
-
-AddEvent("OnPlayerStreamIn",function(player)
-	local clothing=GetPlayerPropertyValue(player,"Clothing")
-	if(clothing~="" and clothing~=nil)then
-		SetPlayerClothingPreset(player,clothing)
-	end
-end)
-
-function OnPlayerNetworkUpdatePropertyValue(player,index,value)
-	if(index=="Clothing")then
-		SetPlayerClothingPreset(player,value)
-	end
-end
-AddEvent("OnPlayerNetworkUpdatePropertyValue",OnPlayerNetworkUpdatePropertyValue)
